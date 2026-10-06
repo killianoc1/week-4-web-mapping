@@ -1,0 +1,49 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ poi.poi_name }}{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+    <a href="{% url 'spatial_analysis:dashboard' %}" class="btn btn-secondary mb-4">&larr; Back to Dashboard</a>
+
+    <div class="card mb-4">
+        <div class="card-body">
+            <h1 class="card-title">{{ poi.poi_name }}</h1>
+            <p class="text-muted">{{ poi.get_poi_type_display }}</p>
+            <p>{{ poi.description }}</p>
+            <p>
+                <strong>Rating:</strong> ⭐ {{ poi.rating }}<br>
+                <strong>Visitors/day:</strong> {{ poi.visitors_per_day }}<br>
+                <strong>Location (lon, lat):</strong> {{ poi.geom.x }}, {{ poi.geom.y }}
+            </p>
+        </div>
+    </div>
+
+    <h2>Nearby Roads (within 1 km)</h2>
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>Road Name</th>
+                <th>Type</th>
+                <th>Speed Limit</th>
+                <th>Length (m)</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for road in nearby_roads %}
+            <tr>
+                <td>{{ road.road_name }}</td>
+                <td>{{ road.get_road_type_display }}</td>
+                <td>{{ road.speed_limit }} km/h</td>
+                <td>{{ road.length_meters }}</td>
+            </tr>
+            {% empty %}
+            <tr><td colspan="4">No nearby roads found.</td></tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+    <h2 class="mt-4">Geometry (GeoJSON)</h2>
+    <pre class="bg-light p-3">{{ poi_json }}</pre>
+</div>
+{% endblock %}
